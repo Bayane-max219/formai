@@ -30,7 +30,7 @@ export default function Home() {
           </h1>
           <p className="text-lg text-gray-500 mb-10 leading-relaxed">
             Succession, naturalisation, MaPrimeRénov'… Remplissez, payez, et recevez votre
-            PDF officiel + lettre d'accompagnement générée par Claude AI.
+            PDF officiel + lettre d'accompagnement générée par IA.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -52,7 +52,7 @@ export default function Home() {
           {[
             { icon: "📝", title: "Wizard guidé", desc: "3 étapes claires, validation en temps réel" },
             { icon: "💳", title: "Paiement sécurisé", desc: "Stripe — CB, Apple Pay, Google Pay" },
-            { icon: "🤖", title: "Lettre IA", desc: "Claude génère votre lettre d'accompagnement" },
+            { icon: "🤖", title: "Lettre IA", desc: "L'IA génère votre lettre d'accompagnement" },
           ].map((f) => (
             <div key={f.title} className="bg-gray-50 rounded-2xl p-6">
               <div className="text-3xl mb-3">{f.icon}</div>
