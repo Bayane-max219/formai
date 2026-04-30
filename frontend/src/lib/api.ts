@@ -12,6 +12,20 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json();
 }
 
+function authHeader() {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  return token ? { Authorization: `Bearer ${token}` } : ({} as Record<string, string>);
+}
+
+export const forms = {
+  create: (type: string, data: Record<string, unknown>) =>
+    request("/forms", {
+      method: "POST",
+      headers: authHeader(),
+      body: JSON.stringify({ type, data }),
+    }),
+};
+
 export const auth = {
   register: (data: { email: string; password: string; name?: string }) =>
     request<{ access_token: string; user: { id: string; email: string; name: string } }>(
