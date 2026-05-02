@@ -5,6 +5,8 @@ import { Repository } from "typeorm";
 import Stripe from "stripe";
 import { Form } from "../forms/form.entity";
 import { PdfService } from "../pdf/pdf.service";
+import { AiService } from "../ai/ai.service";
+import { EmailService } from "../email/email.service";
 
 const PRICES: Record<string, number> = {
   succession: 1900,
@@ -26,6 +28,8 @@ export class PaymentsService {
     private config: ConfigService,
     @InjectRepository(Form) private formRepo: Repository<Form>,
     private pdfService: PdfService,
+    private aiService: AiService,
+    private emailService: EmailService,
   ) {
     this.stripe = new Stripe(this.config.get<string>("STRIPE_SECRET_KEY")!);
   }
@@ -67,19 +71,40 @@ export class PaymentsService {
 
     // Idempotent — already processed
     if (form.status === "generated") {
-      return { status: "generated", pdfBase64: form.data.__pdf as string };
+      return {
+        status: "generated",
+        pdfBase64: form.data.__pdf as string,
+        letter: form.data.__letter as string,
+      };
     }
 
     form.status = "paid";
     await this.formRepo.save(form);
 
-    const pdfBytes = await this.pdfService.generate(form);
+    // Generate PDF and AI letter in parallel
+    const [pdfBytes, letter] = await Promise.all([
+      this.pdfService.generate(form),
+      this.aiService.generateLetter(form.type, form.data),
+    ]);
     const pdfBase64 = Buffer.from(pdfBytes).toString("base64");
 
     form.status = "generated";
-    form.data = { ...form.data, __pdf: pdfBase64 };
+    form.data = { ...form.data, __pdf: pdfBase64, __letter: letter };
     await this.formRepo.save(form);
 
-    return { status: "generated", pdfBase64 };
+    // Send confirmation email (non-blocking — don't fail if email fails)
+    const d = form.data as Record<string, string>;
+    this.emailService
+      .sendFormConfirmation({
+        to: d.email ?? "",
+        name: `${d.prenom ?? ""} ${d.nom ?? ""}`.trim(),
+        formType: form.type,
+        pdfBase64,
+        letter,
+        formId: form.id,
+      })
+      .catch(() => null);
+
+    return { status: "generated", pdfBase64, letter };
   }
 }

@@ -15,6 +15,7 @@ export default function SuccessPage() {
 
   const [status, setStatus] = useState<"loading" | "done" | "error">("loading");
   const [pdfBase64, setPdfBase64] = useState<string | null>(null);
+  const [letter, setLetter] = useState<string | null>(null);
 
   useEffect(() => {
     if (!sessionId || !formId) {
@@ -33,6 +34,7 @@ export default function SuccessPage() {
       .then((data) => {
         if (data.pdfBase64) {
           setPdfBase64(data.pdfBase64);
+          setLetter(data.letter ?? null);
           setStatus("done");
         } else {
           setStatus("error");
@@ -56,46 +58,69 @@ export default function SuccessPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 w-full max-w-md text-center">
+    <div className="min-h-screen bg-gray-50 px-6 py-10">
+      <div className="max-w-2xl mx-auto">
 
         {status === "loading" && (
-          <>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
             <div className="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mx-auto mb-6" />
             <h1 className="text-xl font-bold text-gray-900 mb-2">Génération en cours…</h1>
-            <p className="text-sm text-gray-500">Votre document est en cours de préparation. Merci de patienter.</p>
-          </>
+            <p className="text-sm text-gray-500">
+              L'IA prépare votre document et votre lettre d'accompagnement.
+            </p>
+          </div>
         )}
 
         {status === "done" && (
-          <>
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
+          <div className="space-y-6">
+            {/* Success banner */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h1 className="text-xl font-bold text-gray-900 mb-1">Paiement confirmé !</h1>
+              <p className="text-sm text-gray-500 mb-6">
+                Votre document a été généré et envoyé à votre adresse email.
+              </p>
+              <button
+                onClick={downloadPdf}
+                className="w-full py-3.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors mb-3"
+              >
+                Télécharger le PDF
+              </button>
+              <button
+                onClick={() => router.push("/dashboard")}
+                className="w-full py-3 border border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+              >
+                Retour au tableau de bord
+              </button>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Paiement confirmé !</h1>
-            <p className="text-sm text-gray-500 mb-8">
-              Votre document a été généré avec succès. Téléchargez-le ci-dessous.
-            </p>
-            <button
-              onClick={downloadPdf}
-              className="w-full py-3.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors mb-3"
-            >
-              Télécharger le PDF
-            </button>
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="w-full py-3 border border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition-colors"
-            >
-              Retour au tableau de bord
-            </button>
-          </>
+
+            {/* AI-generated letter */}
+            {letter && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
+                  <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                    Lettre d'accompagnement générée par IA
+                  </h2>
+                </div>
+                <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans leading-relaxed bg-gray-50 rounded-xl p-5">
+                  {letter}
+                </pre>
+                <p className="text-xs text-gray-400 mt-3">
+                  Cette lettre est incluse dans l'email envoyé à votre adresse.
+                </p>
+              </div>
+            )}
+          </div>
         )}
 
         {status === "error" && (
-          <>
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -110,8 +135,9 @@ export default function SuccessPage() {
             >
               Retour au tableau de bord
             </button>
-          </>
+          </div>
         )}
+
       </div>
     </div>
   );
