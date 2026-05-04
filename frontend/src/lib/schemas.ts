@@ -7,7 +7,7 @@ export const step1Schema = z.object({
   telephone: z.string().min(8, "Téléphone invalide"),
   adresse: z.string().min(5, "Adresse requise"),
   ville: z.string().min(2, "Ville requise"),
-  code_postal: z.string().min(4, "Code postal requis"),
+  code_postal: z.string().min(3, "Code postal requis"),
 });
 
 export const step2Schema = z.object({
