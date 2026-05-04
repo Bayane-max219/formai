@@ -44,7 +44,7 @@ export function Step3({ defaultValues, summary, onNext, onBack, loading }: Props
           {...register("valeur_succession")}
           type="number"
           placeholder="Ex: 150000"
-          className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+          className={`w-full px-4 py-2.5 border rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
             errors.valeur_succession ? "border-red-300" : "border-gray-200"
           }`}
         />

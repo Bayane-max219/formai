@@ -18,12 +18,12 @@ export class PaymentsController {
   constructor(private paymentsService: PaymentsService) {}
 
   @Post("checkout")
-  checkout(@Body() dto: CheckoutDto, @Request() req: { user: { userId: string } }) {
-    return this.paymentsService.createCheckoutSession(dto.formId, dto.type, req.user.userId);
+  checkout(@Body() dto: CheckoutDto, @Request() req: { user: { id: string } }) {
+    return this.paymentsService.createCheckoutSession(dto.formId, dto.type, req.user.id);
   }
 
   @Post("confirm")
-  confirm(@Body() dto: ConfirmDto, @Request() req: { user: { userId: string } }) {
-    return this.paymentsService.confirmPayment(dto.sessionId, dto.formId, req.user.userId);
+  confirm(@Body() dto: ConfirmDto, @Request() req: { user: { id: string } }) {
+    return this.paymentsService.confirmPayment(dto.sessionId, dto.formId, req.user.id);
   }
 }

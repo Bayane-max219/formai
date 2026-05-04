@@ -39,34 +39,41 @@ export class PaymentsService {
     const form = await this.formRepo.findOne({ where: { id: formId, userId } });
     if (!form) throw new BadRequestException("Formulaire introuvable");
 
+    const amount = PRICES[type] ?? 1900;
+
+    console.log("Stripe checkout - type:", type, "amount:", amount, "formId:", formId);
+
     const session = await this.stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      mode: "payment",
       line_items: [
         {
+          quantity: 1,
           price_data: {
             currency: "eur",
-            product_data: { name: LABELS[type] ?? type },
-            unit_amount: PRICES[type] ?? 1900,
+            unit_amount: amount,
+            product_data: {
+              name: "Formulaire administratif",
+            },
           },
-          quantity: 1,
         },
       ],
-      mode: "payment",
       success_url: `${frontend}/form/${type}/success?session_id={CHECKOUT_SESSION_ID}&formId=${formId}`,
       cancel_url: `${frontend}/form/${type}/payment?formId=${formId}&cancelled=true`,
-      metadata: { formId, userId },
     });
 
     return { url: session.url };
   }
 
   async confirmPayment(sessionId: string, formId: string, userId: string) {
+    console.log("confirm - sessionId:", sessionId, "formId:", formId, "userId:", userId);
     const session = await this.stripe.checkout.sessions.retrieve(sessionId);
+    console.log("confirm - payment_status:", session.payment_status);
     if (session.payment_status !== "paid") {
       throw new BadRequestException("Paiement non complété");
     }
 
     const form = await this.formRepo.findOne({ where: { id: formId, userId } });
+    console.log("confirm - form found:", form ? form.id : "NOT FOUND");
     if (!form) throw new BadRequestException("Formulaire introuvable");
 
     // Idempotent — already processed

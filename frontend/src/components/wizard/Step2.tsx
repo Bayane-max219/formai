@@ -73,7 +73,7 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 }
 
 function input(hasError: boolean) {
-  return `w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white ${
+  return `w-full px-4 py-2.5 border rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white ${
     hasError ? "border-red-300 bg-red-50" : "border-gray-200"
   }`;
 }
