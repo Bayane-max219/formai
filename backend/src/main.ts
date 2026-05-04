@@ -22,7 +22,7 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix("api");
-  await app.listen(process.env.PORT ?? 3001);
-  console.log(`Backend running on http://localhost:${process.env.PORT ?? 3001}`);
+  await app.listen(process.env.PORT ?? 3001, "0.0.0.0");
+  console.log(`Backend running on http://0.0.0.0:${process.env.PORT ?? 3001}`);
 }
 bootstrap();
