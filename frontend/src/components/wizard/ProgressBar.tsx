@@ -1,4 +1,11 @@
-export function ProgressBar({ current, total }: { current: number; total: number }) {
+const STEP2_LABELS: Record<string, string> = {
+  succession: "Le défunt",
+  naturalisation: "Votre nationalité",
+  maprimereno: "Votre logement",
+};
+
+export function ProgressBar({ current, total, formType }: { current: number; total: number; formType: string }) {
+  const step2Label = STEP2_LABELS[formType] ?? "Informations";
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-2">
@@ -27,7 +34,7 @@ export function ProgressBar({ current, total }: { current: number; total: number
       </div>
       <div className="flex justify-between text-xs text-gray-400 mt-1">
         <span>Vos informations</span>
-        <span>Le défunt</span>
+        <span>{step2Label}</span>
         <span>Récapitulatif</span>
       </div>
     </div>

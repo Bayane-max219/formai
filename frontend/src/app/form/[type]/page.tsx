@@ -6,7 +6,7 @@ import { ProgressBar } from "@/components/wizard/ProgressBar";
 import { Step1 } from "@/components/wizard/Step1";
 import { Step2 } from "@/components/wizard/Step2";
 import { Step3 } from "@/components/wizard/Step3";
-import type { Step1Data, Step2Data, Step3Data, FormData } from "@/lib/schemas";
+import type { Step1Data } from "@/lib/schemas";
 
 const FORM_LABELS: Record<string, { label: string; price: number }> = {
   succession: { label: "Déclaration de succession", price: 19 },
@@ -22,7 +22,7 @@ export default function FormPage() {
   const type = params.type as string;
 
   const [step, setStep] = useState(1);
-  const [data, setData] = useState<Partial<FormData>>({});
+  const [data, setData] = useState<Record<string, unknown>>({});
   const [formId, setFormId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -38,22 +38,21 @@ export default function FormPage() {
     return localStorage.getItem("token") ?? "";
   }
 
-  async function handleStep1(step1: Step1Data) {
+  function handleStep1(step1: Step1Data) {
     setData((prev) => ({ ...prev, ...step1 }));
     setStep(2);
   }
 
-  async function handleStep2(step2: Step2Data) {
+  function handleStep2(step2: Record<string, unknown>) {
     setData((prev) => ({ ...prev, ...step2 }));
     setStep(3);
   }
 
-  async function handleStep3(step3: Step3Data) {
+  async function handleStep3(step3: Record<string, unknown>) {
     setLoading(true);
     const fullData = { ...data, ...step3 };
     try {
       if (!formId) {
-        // Première soumission → créer le formulaire
         const res = await fetch(`${API}/api/forms`, {
           method: "POST",
           headers: {
@@ -64,7 +63,6 @@ export default function FormPage() {
         });
         const form = await res.json();
         setFormId(form.id);
-        // Jour 3 : redirect vers Stripe checkout
         router.push(`/form/${type}/payment?formId=${form.id}`);
       }
     } catch {
@@ -89,7 +87,7 @@ export default function FormPage() {
       </nav>
 
       <main className="max-w-xl mx-auto px-6 py-10">
-        <ProgressBar current={step} total={3} />
+        <ProgressBar current={step} total={3} formType={type} />
 
         <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
           {step === 1 && (
@@ -100,14 +98,16 @@ export default function FormPage() {
           )}
           {step === 2 && (
             <Step2
-              defaultValues={data as Partial<Step2Data>}
+              formType={type}
+              defaultValues={data}
               onNext={handleStep2}
               onBack={() => setStep(1)}
             />
           )}
           {step === 3 && (
             <Step3
-              defaultValues={data as Partial<Step3Data>}
+              formType={type}
+              defaultValues={data}
               summary={data}
               onNext={handleStep3}
               onBack={() => setStep(2)}

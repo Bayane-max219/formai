@@ -36,7 +36,7 @@ export class PdfService {
       y -= 28;
     };
 
-    // Header band
+    // Header
     page.drawRectangle({ x: 0, y: height - 80, width, height: 80, color: rgb(0.1, 0.4, 0.9) });
     page.drawText("FormAI", { x: 50, y: height - 38, size: 24, font: bold, color: rgb(1, 1, 1) });
     page.drawText(TITLES[form.type] ?? form.type.toUpperCase(), {
@@ -51,16 +51,35 @@ export class PdfService {
     row("Téléphone", d.telephone ?? "");
     row("Adresse", `${d.adresse ?? ""}, ${d.code_postal ?? ""} ${d.ville ?? ""}`.trim());
 
-    section("INFORMATIONS DU DÉFUNT");
-    row("Nom complet", `${d.defunt_prenom ?? ""} ${d.defunt_nom ?? ""}`.trim());
-    row("Date de décès", d.date_deces ?? "");
-    row("Lieu de décès", d.lieu_deces ?? "");
-    row("Lien de parenté", d.lien_parente ?? "");
+    if (form.type === "succession") {
+      section("INFORMATIONS DU DÉFUNT");
+      row("Nom complet", `${d.defunt_prenom ?? ""} ${d.defunt_nom ?? ""}`.trim());
+      row("Date de décès", d.date_deces ?? "");
+      row("Lieu de décès", d.lieu_deces ?? "");
+      row("Lien de parenté", d.lien_parente ?? "");
 
-    section("DÉTAILS DE LA SUCCESSION");
-    row("Valeur estimée", `${d.valeur_succession ?? "0"} €`);
-    row("Biens immobiliers", d.biens_immobiliers === "true" ? "Oui" : "Non");
-    row("Comptes bancaires", d.comptes_bancaires === "true" ? "Oui" : "Non");
+      section("DÉTAILS DE LA SUCCESSION");
+      row("Valeur estimée", `${d.valeur_succession ?? "0"} €`);
+      row("Biens immobiliers", d.biens_immobiliers === "true" ? "Oui" : "Non");
+      row("Comptes bancaires", d.comptes_bancaires === "true" ? "Oui" : "Non");
+    }
+
+    if (form.type === "naturalisation") {
+      section("NATIONALITÉ & RÉSIDENCE");
+      row("Pays d'origine", d.pays_origine ?? "");
+      row("Résidence en France", d.duree_residence ?? "");
+      row("Motif de la demande", d.motif_naturalisation ?? "");
+    }
+
+    if (form.type === "maprimereno") {
+      section("VOTRE LOGEMENT");
+      row("Type de logement", d.type_logement ?? "");
+      row("Année de construction", d.annee_construction ?? "");
+      row("Travaux envisagés", d.type_travaux ?? "");
+
+      section("BUDGET TRAVAUX");
+      row("Budget estimé", `${d.budget_travaux ?? "0"} €`);
+    }
 
     // Footer
     page.drawLine({
