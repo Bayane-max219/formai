@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -18,37 +19,51 @@ export default function Home() {
         </div>
       </nav>
 
-      <main className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-        <div className="max-w-2xl">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-blue-600 bg-blue-50 px-4 py-2 rounded-full mb-6">
-            Formulaires administratifs intelligents
-          </span>
-          <h1 className="text-5xl font-bold text-gray-900 leading-tight mb-6">
-            Vos démarches{" "}
-            <span className="text-blue-600">simplifiées</span>{" "}
-            par l'IA
-          </h1>
-          <p className="text-lg text-gray-500 mb-10 leading-relaxed">
-            Succession, naturalisation, MaPrimeRénov'… Remplissez, payez, et recevez votre
-            PDF officiel + lettre d'accompagnement générée par IA.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/register"
-              className="px-8 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors"
-            >
-              Commencer gratuitement →
-            </Link>
-            <Link
-              href="/login"
-              className="px-8 py-3 border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
-            >
-              J'ai déjà un compte
-            </Link>
+      <main className="flex-1 flex flex-col items-center px-6">
+        {/* Hero */}
+        <div className="max-w-5xl w-full flex flex-col md:flex-row items-center gap-12 py-16">
+          <div className="flex-1 text-left">
+            <span className="inline-block text-xs font-semibold tracking-widest uppercase text-blue-600 bg-blue-50 px-4 py-2 rounded-full mb-6">
+              Formulaires administratifs intelligents
+            </span>
+            <h1 className="text-5xl font-bold text-gray-900 leading-tight mb-6">
+              Vos démarches{" "}
+              <span className="text-blue-600">simplifiées</span>{" "}
+              par l'IA
+            </h1>
+            <p className="text-lg text-gray-500 mb-10 leading-relaxed">
+              Succession, naturalisation, MaPrimeRénov'… Remplissez, payez, et recevez votre
+              PDF officiel + lettre d'accompagnement générée par IA.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                href="/register"
+                className="px-8 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors text-center"
+              >
+                Commencer gratuitement →
+              </Link>
+              <Link
+                href="/login"
+                className="px-8 py-3 border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors text-center"
+              >
+                J'ai déjà un compte
+              </Link>
+            </div>
+          </div>
+          <div className="flex-1 w-full">
+            <Image
+              src="/images/hero.jpg"
+              alt="Remplissez vos formulaires administratifs en ligne"
+              width={600}
+              height={400}
+              className="rounded-2xl shadow-lg object-cover w-full"
+              priority
+            />
           </div>
         </div>
 
-        <div className="mt-20 grid sm:grid-cols-3 gap-8 max-w-3xl w-full text-left">
+        {/* Features */}
+        <div className="max-w-3xl w-full grid sm:grid-cols-3 gap-8 pb-20 text-left">
           {[
             { icon: "📝", title: "Wizard guidé", desc: "3 étapes claires, validation en temps réel" },
             { icon: "💳", title: "Paiement sécurisé", desc: "Stripe — CB, Apple Pay, Google Pay" },
